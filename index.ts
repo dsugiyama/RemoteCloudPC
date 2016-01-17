@@ -49,6 +49,7 @@ function onMessage(event: MessageEvent) {
 
 function closeSocket() {
     if (hostConnected) {
+        screenCanvas.removeEventListener('click', onClick);
         ws.send(JSON.stringify({
             type: 'disconnect-guest',
             hostid: hostid

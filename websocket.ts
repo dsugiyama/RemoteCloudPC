@@ -14,6 +14,7 @@ const connectionPairs: { [hostid: string]: ConnectionPair } = {};
 const messageHandlers: { [messageType: string]: MessageHandler } = {
     'connect-host': onConnectHost,
     'connect-guest': onConnectGuest,
+    'disconnect-host': onDisconnectHost,
     'disconnect-guest': onDisconnectGuest,
     'mouse-click': onMouseClick
 };
@@ -56,10 +57,23 @@ function onConnectGuest(ws: WebSocket, message: any, rawData: any) {
     }
 }
 
+function onDisconnectHost(ws: WebSocket, message: any) {
+    const hostid = message.hostid;
+    if (connectionPairs[hostid].guest != null) {
+        connectionPairs[hostid].guest.send(JSON.stringify({
+            type: 'error',
+            description: 'Host disconnected.'
+        }));
+    }
+    delete connectionPairs[hostid];
+}
+
 function onDisconnectGuest(ws: WebSocket, message: any, rawData: any) {
-    const pair = connectionPairs[message.hostid];
-    pair.host.send(rawData);
-    pair.guest = null;
+    const hostid = message.hostid;
+    if (hostid in connectionPairs) {
+        connectionPairs[hostid].host.send(rawData);
+        connectionPairs[hostid].guest = null;
+    }
 }
 
 function onMouseClick(ws: WebSocket, message: any, rawData: any) {
