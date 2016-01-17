@@ -8,6 +8,7 @@
         "http.ts",
         "websocket.ts",
         "index.ts",
+        "host_mock.ts",
         "typings/tsd.d.ts"
     ]
 }

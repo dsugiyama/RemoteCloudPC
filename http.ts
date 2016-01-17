@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const mimetypes: { [index: string]: string } = {
+const mimetypes: { [extension: string]: string } = {
     '.html': 'text/html',
     '.js': 'text/javascript'
 };
