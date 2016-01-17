@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true
+    },
+    "files": [
+        "http.ts",
+        "websocket.ts",
+        "index.ts",
+        "typings/tsd.d.ts"
+    ]
+}

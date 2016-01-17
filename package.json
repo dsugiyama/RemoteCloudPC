@@ -1,0 +1,8 @@
+{
+  "name": "remote-cloud-pc",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "ws": "^1.0.1"
+  }
+}
