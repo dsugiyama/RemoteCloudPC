@@ -1,3 +1,5 @@
+'use strict';
+
 let ws: WebSocket;
 let hostid: string;
 let hostConnected: boolean = false;
