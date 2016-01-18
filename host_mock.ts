@@ -5,7 +5,9 @@ let hostid: string;
 
 ws.on('open', () => {
     ws.send(JSON.stringify({
-        type: 'connect-host'
+        type: 'connect-host',
+        screenWidth: 800,
+        screenHeight: 600
     }));
 });
 

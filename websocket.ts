@@ -3,6 +3,8 @@ import * as WebSocket from 'ws';
 interface ConnectionPair {
     host: WebSocket;
     guest: WebSocket;
+    screenWidth: number;
+    screenHeight: number;
 }
 
 interface MessageHandler {
@@ -32,7 +34,12 @@ wss.on('connection', ws => {
 
 function onConnectHost(ws: WebSocket, message: any) {
     const hostid = String(Math.floor(10000000 * Math.random()));
-    connectionPairs[hostid] = { host: ws, guest: null };
+    connectionPairs[hostid] = {
+        host: ws,
+        guest: null,
+        screenWidth: message.screenWidth,
+        screenHeight: message.screenHeight
+    };
     ws.send(JSON.stringify({
         type: 'create-hostid',
         hostid: hostid
@@ -42,12 +49,13 @@ function onConnectHost(ws: WebSocket, message: any) {
 function onConnectGuest(ws: WebSocket, message: any, rawData: any) {
     const hostid = message.hostid;
     if (hostid in connectionPairs) {
-        connectionPairs[hostid].guest = ws;
-        connectionPairs[hostid].host.send(rawData);
+        const pair = connectionPairs[hostid];
+        pair.guest = ws;
+        pair.host.send(rawData);
         ws.send(JSON.stringify({
-            type: 'screen-size',
-            width: 800,
-            height: 600
+            type: 'host-found',
+            screenWidth: pair.screenWidth,
+            screenHeight: pair.screenHeight
         }));
     } else {
         ws.send(JSON.stringify({
@@ -62,7 +70,7 @@ function onDisconnectHost(ws: WebSocket, message: any) {
     if (connectionPairs[hostid].guest != null) {
         connectionPairs[hostid].guest.send(JSON.stringify({
             type: 'error',
-            description: 'Host disconnected.'
+            description: 'Connection closed by host.'
         }));
     }
     delete connectionPairs[hostid];

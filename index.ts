@@ -31,13 +31,13 @@ window.addEventListener('beforeunload', closeSocket);
 function onMessage(event: MessageEvent) {
     const message = JSON.parse(event.data);
     switch (message.type) {
-        case 'screen-size':
+        case 'host-found':
             hostConnected = true;
             disconnectButton.disabled = false;
-            screenCanvas.width = message.width;
-            screenCanvas.height = message.height;
+            screenCanvas.width = message.screenWidth;
+            screenCanvas.height = message.screenHeight;
             const context = screenCanvas.getContext('2d');
-            context.strokeRect(0, 0, message.width, message.height);
+            context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
             screenCanvas.addEventListener('click', onClick);
             break;
         case 'error':
