@@ -4,11 +4,18 @@
         "target": "es5",
         "noImplicitAny": true
     },
-    "files": [
-        "http.ts",
-        "websocket.ts",
-        "index.ts",
-        "host_mock.ts",
+    "filesGlob": [
+        "*.ts",
         "typings/tsd.d.ts"
-    ]
+    ],
+    "files": [
+        "host_mock.ts",
+        "http.ts",
+        "index.ts",
+        "websocket.ts",
+        "typings/tsd.d.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }
