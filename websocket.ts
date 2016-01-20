@@ -1,6 +1,7 @@
 'use strict';
 
 import * as WebSocket from 'ws';
+import * as msgpack from 'msgpack-lite';
 
 interface ConnectionPair {
     host: WebSocket;
@@ -25,7 +26,7 @@ const messageHandlers: { [messageType: string]: MessageHandler } = {
 
 wss.on('connection', ws => {
     ws.on('message', data => {
-        const message = JSON.parse(data);
+        const message = msgpack.decode(data);
         messageHandlers[message.type](ws, message, data);
     });
 
@@ -42,10 +43,10 @@ function onConnectHost(ws: WebSocket, message: any) {
         screenWidth: message.screenWidth,
         screenHeight: message.screenHeight
     };
-    ws.send(JSON.stringify({
+    ws.send(msgpack.encode({
         type: 'create-hostid',
         hostid: hostid
-    }));
+    }), { binary: true });
 }
 
 function onConnectGuest(ws: WebSocket, message: any, rawData: any) {
@@ -54,26 +55,26 @@ function onConnectGuest(ws: WebSocket, message: any, rawData: any) {
         const pair = connectionPairs[hostid];
         pair.guest = ws;
         pair.host.send(rawData);
-        ws.send(JSON.stringify({
+        ws.send(msgpack.encode({
             type: 'host-found',
             screenWidth: pair.screenWidth,
             screenHeight: pair.screenHeight
-        }));
+        }), { binary: true });
     } else {
-        ws.send(JSON.stringify({
+        ws.send(msgpack.encode({
             type: 'error',
             description: 'Host not found.'
-        }));
+        }), { binary: true });
     }
 }
 
 function onDisconnectHost(ws: WebSocket, message: any) {
     const hostid = message.hostid;
     if (connectionPairs[hostid].guest != null) {
-        connectionPairs[hostid].guest.send(JSON.stringify({
+        connectionPairs[hostid].guest.send(msgpack.encode({
             type: 'error',
             description: 'Connection closed by host.'
-        }));
+        }), { binary: true });
     }
     delete connectionPairs[hostid];
 }

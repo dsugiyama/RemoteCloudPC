@@ -16,9 +16,10 @@ connectButton.addEventListener('click', () => {
     connectButton.disabled = true;
 
     ws = new WebSocket('ws://localhost:8080');
+    ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
-        ws.send(JSON.stringify({
+        ws.send(msgpack.encode({
             type: 'connect-guest',
             hostid: hostid
         }));
@@ -31,7 +32,7 @@ disconnectButton.addEventListener('click', closeSocket);
 window.addEventListener('beforeunload', closeSocket);
 
 function onMessage(event: MessageEvent) {
-    const message = JSON.parse(event.data);
+    const message = msgpack.decode(new Uint8Array(event.data));
     switch (message.type) {
         case 'host-found':
             hostConnected = true;
@@ -52,7 +53,7 @@ function onMessage(event: MessageEvent) {
 function closeSocket() {
     if (hostConnected) {
         screenCanvas.removeEventListener('click', onClick);
-        ws.send(JSON.stringify({
+        ws.send(msgpack.encode({
             type: 'disconnect-guest',
             hostid: hostid
         }));
@@ -68,7 +69,7 @@ function closeSocket() {
 
 function onClick(event: MouseEvent) {
     const clientRect = screenCanvas.getBoundingClientRect();
-    ws.send(JSON.stringify({
+    ws.send(msgpack.encode({
         type: 'mouse-click',
         hostid: hostid,
         x: Math.floor(event.clientX - clientRect.left),
