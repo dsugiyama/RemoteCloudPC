@@ -10,7 +10,7 @@ const mimetypes: { [extension: string]: string } = {
 };
 
 http.createServer((request, response) => {
-    const filename = path.basename(decodeURI(request.url)) || 'index.html';
+    const filename = decodeURI(request.url).substr(1) || 'index.html';
     if (fs.existsSync(filename)) {
         response.writeHead(200, { 'Content-Type': mimetypes[path.extname(filename)] });
         response.end(fs.readFileSync(filename));

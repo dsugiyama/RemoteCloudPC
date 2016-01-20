@@ -2,7 +2,9 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "outDir": "js",
+        "sourceMap": true
     },
     "filesGlob": [
         "*.ts",
