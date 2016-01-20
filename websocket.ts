@@ -11,7 +11,7 @@ interface ConnectionPair {
 }
 
 interface MessageHandler {
-    (ws: WebSocket, message: any, rawData?: any): void;
+    (ws: WebSocket, message: any, rawData: Buffer): void;
 }
 
 const wss = new WebSocket.Server({ 'port': 8080 });
@@ -21,7 +21,8 @@ const messageHandlers: { [messageType: string]: MessageHandler } = {
     'connect-guest': onConnectGuest,
     'disconnect-host': onDisconnectHost,
     'disconnect-guest': onDisconnectGuest,
-    'mouse-click': onMouseClick
+    'mouse-click': onMouseClick,
+    'screen-capture': onScreenCapture
 };
 
 wss.on('connection', ws => {
@@ -49,7 +50,7 @@ function onConnectHost(ws: WebSocket, message: any) {
     }), { binary: true });
 }
 
-function onConnectGuest(ws: WebSocket, message: any, rawData: any) {
+function onConnectGuest(ws: WebSocket, message: any, rawData: Buffer) {
     const hostid = message.hostid;
     if (hostid in connectionPairs) {
         const pair = connectionPairs[hostid];
@@ -79,7 +80,7 @@ function onDisconnectHost(ws: WebSocket, message: any) {
     delete connectionPairs[hostid];
 }
 
-function onDisconnectGuest(ws: WebSocket, message: any, rawData: any) {
+function onDisconnectGuest(ws: WebSocket, message: any, rawData: Buffer) {
     const hostid = message.hostid;
     if (hostid in connectionPairs) {
         connectionPairs[hostid].host.send(rawData);
@@ -87,6 +88,10 @@ function onDisconnectGuest(ws: WebSocket, message: any, rawData: any) {
     }
 }
 
-function onMouseClick(ws: WebSocket, message: any, rawData: any) {
+function onMouseClick(ws: WebSocket, message: any, rawData: Buffer) {
     connectionPairs[message.hostid].host.send(rawData);
+}
+
+function onScreenCapture(ws: WebSocket, message: any, rawData: Buffer) {
+    connectionPairs[message.hostid].guest.send(rawData);
 }

@@ -6,7 +6,7 @@ let hostConnected: boolean = false;
 const hostidInput = <HTMLInputElement>document.getElementById('hostid');
 const connectButton = <HTMLButtonElement>document.getElementById('connect');
 const disconnectButton = <HTMLButtonElement>document.getElementById('disconnect');
-const screenCanvas = <HTMLCanvasElement>document.getElementById('screen');
+const captureImage = <HTMLImageElement>document.getElementById('capture');
 
 disconnectButton.disabled = true;
 
@@ -37,11 +37,17 @@ function onMessage(event: MessageEvent) {
         case 'host-found':
             hostConnected = true;
             disconnectButton.disabled = false;
-            screenCanvas.width = message.screenWidth;
-            screenCanvas.height = message.screenHeight;
-            const context = screenCanvas.getContext('2d');
-            context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
-            screenCanvas.addEventListener('click', onClick);
+            captureImage.width = message.screenWidth;
+            captureImage.height = message.screenHeight;
+            captureImage.addEventListener('click', onClick);
+            break;
+        case 'screen-capture':
+            const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
+            const imageBlobUrl = window.URL.createObjectURL(imageBlob);
+            captureImage.onload = () => {
+                window.URL.revokeObjectURL(imageBlobUrl);
+            };
+            captureImage.src = imageBlobUrl;
             break;
         case 'error':
             closeSocket();
@@ -52,7 +58,7 @@ function onMessage(event: MessageEvent) {
 
 function closeSocket() {
     if (hostConnected) {
-        screenCanvas.removeEventListener('click', onClick);
+        captureImage.removeEventListener('click', onClick);
         ws.send(msgpack.encode({
             type: 'disconnect-guest',
             hostid: hostid
@@ -68,7 +74,7 @@ function closeSocket() {
 }
 
 function onClick(event: MouseEvent) {
-    const clientRect = screenCanvas.getBoundingClientRect();
+    const clientRect = captureImage.getBoundingClientRect();
     ws.send(msgpack.encode({
         type: 'mouse-click',
         hostid: hostid,
