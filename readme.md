@@ -22,14 +22,14 @@ RemoteCloudPC
 4. HTTP サーバー、WebSocket サーバーを起動 (それぞれ別のターミナルで)
 
     ```
-    $ node http.js
-    $ node websocket.js
+    $ node js/http.js
+    $ node js/websocket.js
     ```
 
 5. ホスト (のモック) を起動してホスト ID を得る
 
     ```
-    $ node host_mock.js
+    $ node js/host_mock.js
     Host ID: 9429414
     Press return key to exit.
     ```
