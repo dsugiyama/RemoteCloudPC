@@ -15,7 +15,7 @@ connectButton.addEventListener('click', () => {
     if (hostid == '') return;
     connectButton.disabled = true;
 
-    ws = new WebSocket('ws://localhost:8080');
+    ws = new WebSocket('ws://40.74.115.93:8080');
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {

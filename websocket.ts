@@ -28,6 +28,7 @@ const messageHandlers: { [messageType: string]: MessageHandler } = {
 wss.on('connection', ws => {
     ws.on('message', data => {
         const message = msgpack.decode(data);
+        console.log(message);
         messageHandlers[message.type](ws, message, data);
     });
 

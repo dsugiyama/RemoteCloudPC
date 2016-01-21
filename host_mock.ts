@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as WebSocket from 'ws';
 import * as msgpack from 'msgpack-lite';
 
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket('ws://40.74.115.93:8080');
 let hostid: string;
 const images = [0, 1, 2, 3].map(i => fs.readFileSync(`resource/${i}.jpg`));
 let stopSendImage: boolean;
