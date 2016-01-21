@@ -16,10 +16,9 @@ connectButton.addEventListener('click', () => {
     connectButton.disabled = true;
 
     ws = new WebSocket('ws://40.74.115.93:8080');
-    ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
-        ws.send(msgpack.encode({
+        ws.send(JSON.stringify({
             type: 'connect-guest',
             hostid: hostid
         }));
@@ -32,7 +31,7 @@ disconnectButton.addEventListener('click', closeSocket);
 window.addEventListener('beforeunload', closeSocket);
 
 function onMessage(event: MessageEvent) {
-    const message = msgpack.decode(new Uint8Array(event.data));
+    const message = JSON.parse(event.data);
     switch (message.type) {
         case 'host-found':
             hostConnected = true;
@@ -41,14 +40,14 @@ function onMessage(event: MessageEvent) {
             captureImage.height = message.screenHeight;
             captureImage.addEventListener('click', onClick);
             break;
-        case 'screen-capture':
-            const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
-            const imageBlobUrl = window.URL.createObjectURL(imageBlob);
-            captureImage.onload = () => {
-                window.URL.revokeObjectURL(imageBlobUrl);
-            };
-            captureImage.src = imageBlobUrl;
-            break;
+        // case 'screen-capture':
+        //     const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
+        //     const imageBlobUrl = window.URL.createObjectURL(imageBlob);
+        //     captureImage.onload = () => {
+        //         window.URL.revokeObjectURL(imageBlobUrl);
+        //     };
+        //     captureImage.src = imageBlobUrl;
+        //     break;
         case 'error':
             closeSocket();
             alert('error: ' + message.description);
@@ -59,7 +58,7 @@ function onMessage(event: MessageEvent) {
 function closeSocket() {
     if (hostConnected) {
         captureImage.removeEventListener('click', onClick);
-        ws.send(msgpack.encode({
+        ws.send(JSON.stringify({
             type: 'disconnect-guest',
             hostid: hostid
         }));
@@ -75,7 +74,7 @@ function closeSocket() {
 
 function onClick(event: MouseEvent) {
     const clientRect = captureImage.getBoundingClientRect();
-    ws.send(msgpack.encode({
+    ws.send(JSON.stringify({
         type: 'mouse-click',
         hostid: hostid,
         x: Math.floor(event.clientX - clientRect.left),
