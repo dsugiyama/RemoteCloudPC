@@ -11,10 +11,10 @@
         "typings/tsd.d.ts"
     ],
     "files": [
+        "jsmpg.d.ts",
         "host_mock.ts",
         "http.ts",
         "index.ts",
-        "msgpack-lite.d.ts",
         "websocket.ts",
         "typings/tsd.d.ts"
     ],

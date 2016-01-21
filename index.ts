@@ -38,10 +38,12 @@ function onMessage(event: MessageEvent) {
             disconnectButton.disabled = false;
             screenCanvas.width = message.screenWidth;
             screenCanvas.height = message.screenHeight;
-            const context = screenCanvas.getContext('2d');
-            context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
-            screenCanvas.addEventListener('click', onClick);
+            //const context = screenCanvas.getContext('2d');
+            //context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
+            //screenCanvas.addEventListener('click', onClick);
             document.addEventListener('keydown', onKeyDown);
+            let dispWs = new WebSocket( 'ws://localhost:8084/' );
+            let player = new jsmpeg(dispWs, {canvas: screenCanvas, hostid: hostid});
             break;
         // case 'screen-capture':
         //     const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
