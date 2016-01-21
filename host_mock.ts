@@ -28,7 +28,7 @@ ws.on('message', data => {
         case 'connect-guest':
             console.log('Guest connected.');
             stopSendImage = false;
-            sendImage(0);
+            // sendImage(0);
             break;
         case 'disconnect-guest':
             console.log('Guest disconnected.');
@@ -36,6 +36,9 @@ ws.on('message', data => {
             break;
         case 'mouse-click':
             console.log(`click: x = ${message.x}, y = ${message.y}`);
+            break;
+        case 'key-down':
+            console.log(`keydown: ${message.key}`);
             break;
     }
 });

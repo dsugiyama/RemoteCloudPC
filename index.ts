@@ -6,7 +6,7 @@ let hostConnected: boolean = false;
 const hostidInput = <HTMLInputElement>document.getElementById('hostid');
 const connectButton = <HTMLButtonElement>document.getElementById('connect');
 const disconnectButton = <HTMLButtonElement>document.getElementById('disconnect');
-const captureImage = <HTMLImageElement>document.getElementById('capture');
+const screenCanvas = <HTMLCanvasElement>document.getElementById('screen');
 
 disconnectButton.disabled = true;
 
@@ -36,9 +36,12 @@ function onMessage(event: MessageEvent) {
         case 'host-found':
             hostConnected = true;
             disconnectButton.disabled = false;
-            captureImage.width = message.screenWidth;
-            captureImage.height = message.screenHeight;
-            captureImage.addEventListener('click', onClick);
+            screenCanvas.width = message.screenWidth;
+            screenCanvas.height = message.screenHeight;
+            const context = screenCanvas.getContext('2d');
+            context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
+            screenCanvas.addEventListener('click', onClick);
+            document.addEventListener('keydown', onKeyDown);
             break;
         // case 'screen-capture':
         //     const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
@@ -57,7 +60,8 @@ function onMessage(event: MessageEvent) {
 
 function closeSocket() {
     if (hostConnected) {
-        captureImage.removeEventListener('click', onClick);
+        screenCanvas.removeEventListener('click', onClick);
+        document.removeEventListener('keydown', onKeyDown);
         ws.send(JSON.stringify({
             type: 'disconnect-guest',
             hostid: hostid
@@ -73,11 +77,19 @@ function closeSocket() {
 }
 
 function onClick(event: MouseEvent) {
-    const clientRect = captureImage.getBoundingClientRect();
+    const clientRect = screenCanvas.getBoundingClientRect();
     ws.send(JSON.stringify({
         type: 'mouse-click',
         hostid: hostid,
         x: Math.floor(event.clientX - clientRect.left),
         y: Math.floor(event.clientY - clientRect.top)
+    }));
+}
+
+function onKeyDown(event: KeyboardEvent) {
+    ws.send(JSON.stringify({
+        type: 'key-down',
+        hostid: hostid,
+        key: event.key.toUpperCase()
     }));
 }

@@ -21,6 +21,7 @@ const messageHandlers: { [messageType: string]: MessageHandler } = {
     'disconnect-host': onDisconnectHost,
     'disconnect-guest': onDisconnectGuest,
     'mouse-click': onMouseClick,
+    'key-down': onKeyDown,
     'screen-capture': onScreenCapture
 };
 
@@ -89,6 +90,10 @@ function onDisconnectGuest(ws: WebSocket, message: any, rawData: Buffer) {
 }
 
 function onMouseClick(ws: WebSocket, message: any, rawData: Buffer) {
+    connectionPairs[message.hostid].host.send(rawData);
+}
+
+function onKeyDown(ws: WebSocket, message: any, rawData: Buffer) {
     connectionPairs[message.hostid].host.send(rawData);
 }
 
