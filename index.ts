@@ -15,7 +15,7 @@ connectButton.addEventListener('click', () => {
     if (hostid == '') return;
     connectButton.disabled = true;
 
-    ws = new WebSocket('ws://40.74.115.93:8080');
+    ws = new WebSocket('ws://rcpc00.japanwest.cloudapp.azure.com:8080');
 
     ws.onopen = () => {
         ws.send(JSON.stringify({
@@ -41,6 +41,7 @@ function onMessage(event: MessageEvent) {
             const context = screenCanvas.getContext('2d');
             context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
             screenCanvas.addEventListener('click', onClick);
+            screenCanvas.addEventListener('contextmenu', onContextMenu);
             document.addEventListener('keydown', onKeyDown);
             break;
         // case 'screen-capture':
@@ -81,9 +82,22 @@ function onClick(event: MouseEvent) {
     ws.send(JSON.stringify({
         type: 'mouse-click',
         hostid: hostid,
+        button: 'left',
         x: Math.floor(event.clientX - clientRect.left),
         y: Math.floor(event.clientY - clientRect.top)
     }));
+}
+
+function onContextMenu(event: MouseEvent) {
+    const clientRect = screenCanvas.getBoundingClientRect();
+    ws.send(JSON.stringify({
+        type: 'mouse-click',
+        hostid: hostid,
+        button: 'right',
+        x: Math.floor(event.clientX - clientRect.left),
+        y: Math.floor(event.clientY - clientRect.top)
+    }));
+    event.preventDefault();
 }
 
 function onKeyDown(event: KeyboardEvent) {

@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as WebSocket from 'ws';
 
-const ws = new WebSocket('ws://40.74.115.93:8080');
+const ws = new WebSocket('ws://rcpc00.japanwest.cloudapp.azure.com:8080');
 let hostid: string;
 const images = [0, 1, 2, 3].map(i => fs.readFileSync(`resource/${i}.jpg`));
 let stopSendImage: boolean;
@@ -35,7 +35,7 @@ ws.on('message', data => {
             stopSendImage = true;
             break;
         case 'mouse-click':
-            console.log(`click: x = ${message.x}, y = ${message.y}`);
+            console.log(`click: button = ${message.button}, x = ${message.x}, y = ${message.y}`);
             break;
         case 'key-down':
             console.log(`keydown: ${message.key}`);
