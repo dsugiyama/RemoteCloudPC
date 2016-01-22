@@ -1,10 +1,12 @@
 'use strict';
 
 import * as WebSocket from 'ws';
+import * as http from 'http';
 
 interface ConnectionPair {
     host: WebSocket;
     guest: WebSocket;
+    guestDisp: WebSocket;
     screenWidth: number;
     screenHeight: number;
 }
@@ -42,6 +44,7 @@ function onConnectHost(ws: WebSocket, message: any) {
     connectionPairs[hostid] = {
         host: ws,
         guest: null,
+        guestDisp: undefined,
         screenWidth: message.screenWidth,
         screenHeight: message.screenHeight
     };
@@ -100,3 +103,74 @@ function onKeyDown(ws: WebSocket, message: any, rawData: Buffer) {
 function onScreenCapture(ws: WebSocket, message: any, rawData: Buffer) {
     connectionPairs[message.hostid].guest.send(rawData);
 }
+
+
+
+//
+// Display Stream Server
+//
+const STREAM_PORT: number = 8082;
+const DISP_WEBSOCKET_PORT: number =  8084;
+const STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
+
+const DispWS = new WebSocket.Server({'port': DISP_WEBSOCKET_PORT});
+
+DispWS.on('connection', (ws) => {
+    ws.on('message', data => {
+       let hostid = data;
+       
+       if(hostid in connectionPairs) {
+           console.log('connected hostid:' + hostid);
+           
+           let pair = connectionPairs[hostid];
+           pair.guestDisp = ws;
+           
+           // Send Header
+           let streamHeader = new Buffer(8);
+	       streamHeader.write(STREAM_MAGIC_BYTES);
+	       streamHeader.writeUInt16BE(pair.screenWidth, 4);
+	       streamHeader.writeUInt16BE(pair.screenHeight, 6);
+           
+	       ws.send(streamHeader, {binary:true});
+       }
+    });
+    
+	ws.on('close', function(code, message){
+		console.log( 'Disconnected WebSocket' );
+	});
+});
+
+function broadcast(data: any, hostid: string) {
+    if( hostid in connectionPairs) {
+        let pair = connectionPairs[hostid];
+        if( pair.guestDisp && pair.guestDisp.readyState == 1 ) {
+            pair.guestDisp.send(data, {binary: true});
+        }
+    }
+};
+
+
+// HTTP Server to accept incomming MPEG Stream
+var streamServer = http.createServer( function(request, response) {
+	var params = request.url.substr(1).split('/');
+    
+    let hostid = params[0];
+	if( hostid in connectionPairs ) {
+		
+		console.log(
+			'Stream Connected: ' + request.socket.remoteAddress + 
+			':' + request.socket.remotePort);
+            
+		request.on('data', function(data:any){
+			broadcast(data, hostid);
+		});
+	}
+	else {
+		console.log('hostid:'+hostid+' is not found');
+        console.log(connectionPairs);
+		response.end();
+	}
+}).listen(STREAM_PORT);
+
+console.log('Listening for MPEG Stream on http://hostname:'+STREAM_PORT+'/<hostid>/');
+console.log('Awaiting DispWebSocker connections on ws://hostname:'+DISP_WEBSOCKET_PORT+'/');
