@@ -22,7 +22,9 @@ const messageHandlers: { [messageType: string]: MessageHandler } = {
     'connect-guest': onConnectGuest,
     'disconnect-host': onDisconnectHost,
     'disconnect-guest': onDisconnectGuest,
-    'mouse-click': onMouseClick,
+    'mouse-down': onMouseEvent,
+    'mouse-up': onMouseEvent,
+    'mouse-move': onMouseEvent,
     'key-down': onKeyDown,
     'screen-capture': onScreenCapture
 };
@@ -92,7 +94,7 @@ function onDisconnectGuest(ws: WebSocket, message: any, rawData: Buffer) {
     }
 }
 
-function onMouseClick(ws: WebSocket, message: any, rawData: Buffer) {
+function onMouseEvent(ws: WebSocket, message: any, rawData: Buffer) {
     connectionPairs[message.hostid].host.send(rawData);
 }
 

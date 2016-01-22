@@ -39,21 +39,13 @@ function onMessage(event: MessageEvent) {
             screenCanvas.width = message.screenWidth;
             screenCanvas.height = message.screenHeight;
             screenCanvas.addEventListener('contextmenu', onContextMenu);
-            //const context = screenCanvas.getContext('2d');
-            //context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
-            screenCanvas.addEventListener('click', onClick);
+            screenCanvas.addEventListener('mousedown', onMouseDown);
+            screenCanvas.addEventListener('mouseup', onMouseUp);
+            screenCanvas.addEventListener('mousemove', onMouseMove);
             document.addEventListener('keydown', onKeyDown);
             let dispWs = new WebSocket( 'ws://rcpc00.japanwest.cloudapp.azure.com:8084/' );
             let player = new jsmpeg(dispWs, {canvas: screenCanvas, hostid: hostid});
             break;
-        // case 'screen-capture':
-        //     const imageBlob = new Blob([message.data], { type: 'image/jpeg' });
-        //     const imageBlobUrl = window.URL.createObjectURL(imageBlob);
-        //     captureImage.onload = () => {
-        //         window.URL.revokeObjectURL(imageBlobUrl);
-        //     };
-        //     captureImage.src = imageBlobUrl;
-        //     break;
         case 'error':
             closeSocket();
             alert('error: ' + message.description);
@@ -63,7 +55,10 @@ function onMessage(event: MessageEvent) {
 
 function closeSocket() {
     if (hostConnected) {
-        screenCanvas.removeEventListener('click', onClick);
+        screenCanvas.removeEventListener('contextmenu', onContextMenu);
+        screenCanvas.removeEventListener('mousedown', onMouseDown);
+        screenCanvas.removeEventListener('mouseup', onMouseUp);
+        screenCanvas.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('keydown', onKeyDown);
         ws.send(JSON.stringify({
             type: 'disconnect-guest',
@@ -79,26 +74,39 @@ function closeSocket() {
     }
 }
 
-function onClick(event: MouseEvent) {
+function onMouseDown(event: MouseEvent) {
     const clientRect = screenCanvas.getBoundingClientRect();
     ws.send(JSON.stringify({
-        type: 'mouse-click',
+        type: 'mouse-down',
         hostid: hostid,
-        button: 'left',
+        button: event.button == 0 ? 'left' : 'right',
+        x: Math.floor(event.clientX - clientRect.left),
+        y: Math.floor(event.clientY - clientRect.top)
+    }));
+}
+
+function onMouseUp(event: MouseEvent) {
+    const clientRect = screenCanvas.getBoundingClientRect();
+    ws.send(JSON.stringify({
+        type: 'mouse-up',
+        hostid: hostid,
+        button: event.button == 0 ? 'left' : 'right',
+        x: Math.floor(event.clientX - clientRect.left),
+        y: Math.floor(event.clientY - clientRect.top)
+    }));
+}
+
+function onMouseMove(event: MouseEvent) {
+    const clientRect = screenCanvas.getBoundingClientRect();
+    ws.send(JSON.stringify({
+        type: 'mouse-move',
+        hostid: hostid,
         x: Math.floor(event.clientX - clientRect.left),
         y: Math.floor(event.clientY - clientRect.top)
     }));
 }
 
 function onContextMenu(event: MouseEvent) {
-    const clientRect = screenCanvas.getBoundingClientRect();
-    ws.send(JSON.stringify({
-        type: 'mouse-click',
-        hostid: hostid,
-        button: 'right',
-        x: Math.floor(event.clientX - clientRect.left),
-        y: Math.floor(event.clientY - clientRect.top)
-    }));
     event.preventDefault();
 }
 
