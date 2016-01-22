@@ -41,9 +41,9 @@ function onMessage(event: MessageEvent) {
             screenCanvas.addEventListener('contextmenu', onContextMenu);
             //const context = screenCanvas.getContext('2d');
             //context.strokeRect(0, 0, screenCanvas.width, screenCanvas.height);
-            //screenCanvas.addEventListener('click', onClick);
+            screenCanvas.addEventListener('click', onClick);
             document.addEventListener('keydown', onKeyDown);
-            let dispWs = new WebSocket( 'ws://localhost:8084/' );
+            let dispWs = new WebSocket( 'ws://rcpc00.japanwest.cloudapp.azure.com:8084/' );
             let player = new jsmpeg(dispWs, {canvas: screenCanvas, hostid: hostid});
             break;
         // case 'screen-capture':
