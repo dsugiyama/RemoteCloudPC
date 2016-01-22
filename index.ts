@@ -8,6 +8,14 @@ const connectButton = <HTMLButtonElement>document.getElementById('connect');
 const disconnectButton = <HTMLButtonElement>document.getElementById('disconnect');
 const screenCanvas = <HTMLCanvasElement>document.getElementById('screen');
 
+const keymap: { [src: string]: string } = {
+    ' ': 'SPACE',
+    '+': 'ADD',
+    '-': 'SUBTRACT',
+    '*': 'MULTIPLY',
+    '/': 'DIVIDE'
+};
+
 disconnectButton.disabled = true;
 
 connectButton.addEventListener('click', () => {
@@ -114,6 +122,9 @@ function onKeyDown(event: KeyboardEvent) {
     ws.send(JSON.stringify({
         type: 'key-down',
         hostid: hostid,
-        key: event.key.toUpperCase()
+        key: (event.key in keymap) ? keymap[event.key] : event.key.toUpperCase(),
+        shift: event.shiftKey,
+        alt: event.altKey,
+        ctrl: event.ctrlKey
     }));
 }
