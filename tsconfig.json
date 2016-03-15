@@ -8,10 +8,11 @@
     },
     "filesGlob": [
         "*.ts",
+        "*.js",
         "typings/tsd.d.ts"
     ],
     "files": [
-        "jsmpg.d.ts",
+        "jsmpg.js",
         "host_mock.ts",
         "http.ts",
         "index.ts",
