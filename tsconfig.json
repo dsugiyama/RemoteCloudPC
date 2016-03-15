@@ -9,7 +9,7 @@
     "filesGlob": [
         "*.ts",
         "*.js",
-        "typings/tsd.d.ts"
+        "typings/main.d.ts"
     ],
     "files": [
         "jsmpg.js",
@@ -17,7 +17,7 @@
         "http.ts",
         "index.ts",
         "websocket.ts",
-        "typings/tsd.d.ts"
+        "typings/main.d.ts"
     ],
     "atom": {
         "rewriteTsconfig": true
