@@ -7,6 +7,7 @@ const hostidInput = <HTMLInputElement>document.getElementById('hostid');
 const connectButton = <HTMLButtonElement>document.getElementById('connect');
 const disconnectButton = <HTMLButtonElement>document.getElementById('disconnect');
 const screenCanvas = <HTMLCanvasElement>document.getElementById('screen');
+const serverAddress = "localhost";
 
 const keymap: { [src: string]: string } = {
     ' ': 'SPACE',
@@ -23,7 +24,7 @@ connectButton.addEventListener('click', () => {
     if (hostid == '') return;
     connectButton.disabled = true;
 
-    ws = new WebSocket('ws://rcpc00.japanwest.cloudapp.azure.com:8080');
+    ws = new WebSocket(`ws://${serverAddress}:8080`);
 
     ws.onopen = () => {
         ws.send(JSON.stringify({
@@ -51,7 +52,7 @@ function onMessage(event: MessageEvent) {
             screenCanvas.addEventListener('mouseup', onMouseUp);
             screenCanvas.addEventListener('mousemove', onMouseMove);
             document.addEventListener('keydown', onKeyDown);
-            let dispWs = new WebSocket( 'ws://rcpc00.japanwest.cloudapp.azure.com:8084/' );
+            let dispWs = new WebSocket( `ws://${serverAddress}:8084/` );
             let player = new jsmpeg(dispWs, {canvas: screenCanvas, hostid: hostid});
             break;
         case 'error':
