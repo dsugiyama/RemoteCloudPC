@@ -5,10 +5,10 @@
 			"name": "Launch http",
 			"type": "node",
 			"request": "launch",
-			"program": "js/http.js",
+			"program": "${workspaceRoot}/js/http.js",
 			"stopOnEntry": false,
 			"args": [],
-			"cwd": ".",
+			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
 				"--nolazy"
@@ -18,16 +18,16 @@
 			},
 			"externalConsole": false,
 			"sourceMaps": true,
-			"outDir": "js"
+			"outDir": "${workspaceRoot}/js"
 		},
         {
 			"name": "Launch websocket",
 			"type": "node",
 			"request": "launch",
-			"program": "js/websocket.js",
+			"program": "${workspaceRoot}/js/websocket.js",
 			"stopOnEntry": false,
 			"args": [],
-			"cwd": ".",
+			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
 				"--nolazy"
@@ -37,16 +37,16 @@
 			},
 			"externalConsole": false,
 			"sourceMaps": true,
-			"outDir": "js"
+			"outDir": "${workspaceRoot}/js"
 		},
         {
 			"name": "Launch host_mock",
 			"type": "node",
 			"request": "launch",
-			"program": "js/host_mock.js",
+			"program": "${workspaceRoot}/js/host_mock.js",
 			"stopOnEntry": false,
 			"args": [],
-			"cwd": ".",
+			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
 				"--nolazy"
@@ -56,7 +56,7 @@
 			},
 			"externalConsole": false,
 			"sourceMaps": true,
-			"outDir": "js"
+			"outDir": "${workspaceRoot}/js"
 		},
 		{
 			"name": "Attach",
