@@ -121,23 +121,23 @@ const DispWS = new WebSocket.Server({'port': DISP_WEBSOCKET_PORT});
 DispWS.on('connection', (ws) => {
     ws.on('message', data => {
        let hostid = data;
-       
+
        if(hostid in connectionPairs) {
            console.log('connected hostid:' + hostid);
-           
+
            let pair = connectionPairs[hostid];
            pair.guestDisp = ws;
-           
+
            // Send Header
            let streamHeader = new Buffer(8);
 	       streamHeader.write(STREAM_MAGIC_BYTES);
 	       streamHeader.writeUInt16BE(pair.screenWidth, 4);
 	       streamHeader.writeUInt16BE(pair.screenHeight, 6);
-           
+
 	       ws.send(streamHeader, {binary:true});
        }
     });
-    
+
 	ws.on('close', function(code, message){
 		console.log( 'Disconnected WebSocket' );
 	});
@@ -156,14 +156,14 @@ function broadcast(data: any, hostid: string) {
 // HTTP Server to accept incomming MPEG Stream
 var streamServer = http.createServer( function(request, response) {
 	var params = request.url.substr(1).split('/');
-    
+
     let hostid = params[0];
 	if( hostid in connectionPairs ) {
-		
+
 		console.log(
-			'Stream Connected: ' + request.socket.remoteAddress + 
+			'Stream Connected: ' + request.socket.remoteAddress +
 			':' + request.socket.remotePort);
-            
+
 		request.on('data', function(data:any){
 			broadcast(data, hostid);
 		});

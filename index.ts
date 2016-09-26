@@ -5,10 +5,10 @@ import { jsmpeg } from './jsmpg'
 let ws: WebSocket;
 let hostid: string;
 let hostConnected: boolean = false;
-const hostidInput = <HTMLInputElement>document.getElementById('hostid');
-const connectButton = <HTMLButtonElement>document.getElementById('connect');
-const disconnectButton = <HTMLButtonElement>document.getElementById('disconnect');
-const screenCanvas = <HTMLCanvasElement>document.getElementById('screen');
+const hostidInput = <HTMLInputElement> document.getElementById('hostid');
+const connectButton = <HTMLButtonElement> document.getElementById('connect');
+const disconnectButton = <HTMLButtonElement> document.getElementById('disconnect');
+const screenCanvas = <HTMLCanvasElement> document.getElementById('screen');
 const serverAddress = "localhost";
 
 disconnectButton.disabled = true;
