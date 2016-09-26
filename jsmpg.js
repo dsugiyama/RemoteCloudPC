@@ -435,7 +435,6 @@ jsmpeg.prototype.findStartCode = function( code ) {
 			return current;
 		}
 	}
-	return BitReader.NOT_FOUND;
 };
 
 jsmpeg.prototype.fillArray = function(a, value) {
@@ -2486,3 +2485,4 @@ BitReader.prototype.rewind = function(count) {
 	
 })(window);
 
+export { jsmpeg }

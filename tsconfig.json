@@ -3,6 +3,7 @@
         "module": "commonjs",
         "target": "es5",
         "noImplicitAny": true,
+        "allowJs": true,
         "outDir": "js",
         "sourceMap": true
     },

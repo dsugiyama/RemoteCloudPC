@@ -2,6 +2,7 @@
 
 import * as WebSocket from 'ws';
 import * as http from 'http';
+import { jsmpeg } from './jsmpg';
 
 interface ConnectionPair {
     host: WebSocket;

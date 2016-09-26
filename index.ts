@@ -1,5 +1,7 @@
 'use strict';
 
+import { jsmpeg } from './jsmpg'
+
 let ws: WebSocket;
 let hostid: string;
 let hostConnected: boolean = false;
